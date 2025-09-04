@@ -5,10 +5,15 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { blogService } from '@/app/services/blogServices';
+import "react-quill-new/dist/quill.snow.css";
+import dynamic from 'next/dynamic';
+
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
+
 
 export default function BlogPost() {
     const router = useRouter();
-    const params = useParams();   
+    const params = useParams();
     const { id } = params;
 
     const [blog, setBlog] = useState(null);
@@ -121,10 +126,9 @@ export default function BlogPost() {
                             )}
                         </div>
 
-                        <div className="prose max-w-none">
-                            <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                                {blog.description}
-                            </p>
+                        <div className="prose max-w-none ql-editor">
+                            <div className="leading-relaxed" dangerouslySetInnerHTML={{ __html: blog.description }}>
+                            </div>
                         </div>
                     </div>
                 </article>

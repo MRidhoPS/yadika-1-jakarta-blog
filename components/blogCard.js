@@ -35,8 +35,9 @@ export default function BlogCard({ blog }) {
                         {blog.title}
                     </Link>
                 </h2>
-                <p className="text-gray-600 text-sm line-clamp-3">
-                    {blog.description}
+                <p className="text-gray-600 text-sm line-clamp-3"
+                    dangerouslySetInnerHTML={{ __html: blog.description }}
+                >
                 </p>
                 <div className="mt-4">
                     <Link

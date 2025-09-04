@@ -24,3 +24,44 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Fix untuk list hasil Quill */
+.ql-editor ol,
+.ql-editor ul {
+  padding-left: 1.5rem; /* kasih indentasi */
+}
+
+.ql-editor ol {
+  list-style-type: decimal; /* angka untuk ordered list */
+}
+
+.ql-editor ul {
+  list-style-type: disc; /* bullet untuk unordered list */
+}
+
+.ql-editor li {
+  list-style: inherit;
+}
+
+/* Quill menambahkan span. Hilangkan ql-ui agar tidak ngebug layout */
+.ql-editor .ql-ui {
+  display: list-item; /* sembunyikan span bullet dummy bawaan quill */
+}
+
+.ql-editor h1 {
+  font-size: 2rem;       /* gedein heading */
+  font-weight: bold;
+  margin: 1rem 0 0.5rem;
+}
+
+.ql-editor h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 1rem 0 0.5rem;
+}
+
+.ql-editor h3 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin: 1rem 0 0.5rem;
+}
