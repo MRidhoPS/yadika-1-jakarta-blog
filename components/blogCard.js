@@ -35,10 +35,10 @@ export default function BlogCard({ blog }) {
                         {blog.title}
                     </Link>
                 </h2>
-                <p className="text-gray-600 text-sm line-clamp-3"
+                <div className="text-gray-600 text-sm line-clamp-3"
                     dangerouslySetInnerHTML={{ __html: blog.description }}
                 >
-                </p>
+                </div>
                 <div className="mt-4">
                     <Link
                         href={`/blog/${blog.id}`}
