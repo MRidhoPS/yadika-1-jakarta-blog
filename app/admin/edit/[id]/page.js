@@ -37,18 +37,6 @@ export default function EditBlog() {
     }
   };
 
-  // const handleSubmit = async (data) => {
-  //   try {
-  //     setIsLoading(true);
-  //     await blogService.updateBlog(id, data);
-  //     router.push(`/blog/${id}`);
-  //   } catch (error) {
-  //     console.error("Error updating blog:", error);
-  //     alert("Error updating blog post. Please try again.");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
 
   const handleSubmit = async (data) => {
     try {
@@ -60,39 +48,46 @@ export default function EditBlog() {
       if (data.image && data.image.length > 0 && data.image[0] instanceof File) {
         const file = data.image[0];
 
-        // Convert to Base64
-        const toBase64 = (file) =>
-          new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = reject;
+        const maxSize = 3 * 1024 * 1024; // 3 MB
+        if (file.size > maxSize) {
+          alert('Ukuran file terlalu besar. Maksimal 3 MB.');
+          updatedData.image = blog.image; // fallback pakai image lama
+          // stop di sini, jangan lanjut upload
+        } else {
+          // Convert to Base64
+          const toBase64 = (file) =>
+            new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.readAsDataURL(file);
+              reader.onload = () => resolve(reader.result);
+              reader.onerror = reject;
+            });
+
+          const base64File = await toBase64(file);
+
+          // Upload new image to Cloudinary
+          const uploadRes = await fetch('/api/upload-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ file: base64File }),
           });
 
-        const base64File = await toBase64(file);
+          const text = await uploadRes.text();
+          let uploadData;
 
-        // Upload new image to Cloudinary
-        const uploadRes = await fetch('/api/upload-image', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ file: base64File }),
-        });
+          try {
+            uploadData = JSON.parse(text);
+          } catch {
+            throw new Error(`Invalid JSON from upload API: ${text}`);
+          }
 
-        const text = await uploadRes.text();
-        let uploadData;
+          if (!uploadRes.ok) {
+            throw new Error(uploadData.error || 'Image upload failed');
+          }
 
-        try {
-          uploadData = JSON.parse(text);
-        } catch {
-          throw new Error(`Invalid JSON from upload API: ${text}`);
+          // Replace image with Cloudinary URL
+          updatedData.image = uploadData.url;
         }
-
-        if (!uploadRes.ok) {
-          throw new Error(uploadData.error || 'Image upload failed');
-        }
-
-        // Replace image with Cloudinary URL
-        updatedData.image = uploadData.url;
       } else if (typeof data.image === 'string') {
         // User didn’t upload new image — keep existing Cloudinary URL
         updatedData.image = data.image;
@@ -113,6 +108,79 @@ export default function EditBlog() {
       setIsLoading(false);
     }
   };
+
+
+  // const handleSubmit = async (data) => {
+  //   try {
+  //     setIsLoading(true);
+
+  //     let updatedData = { ...data };
+
+  //     // If user selected a new file (FileList object, not string)
+  //     if (data.image && data.image.length > 0 && data.image[0] instanceof File) {
+  //       const file = data.image[0];
+
+  //       const maxSize = 3 * 1024 * 1024; // 3 MB
+  //       if (file.size > maxSize) {
+  //         alert('Ukuran file terlalu besar. Maksimal 3 MB.');
+  //         updatedData.image = blog.image;
+  //       } else {
+
+  //       }
+
+  //       // Convert to Base64
+  //       const toBase64 = (file) =>
+  //         new Promise((resolve, reject) => {
+  //           const reader = new FileReader();
+  //           reader.readAsDataURL(file);
+  //           reader.onload = () => resolve(reader.result);
+  //           reader.onerror = reject;
+  //         });
+
+  //       const base64File = await toBase64(file);
+
+  //       // Upload new image to Cloudinary
+  //       const uploadRes = await fetch('/api/upload-image', {
+  //         method: 'POST',
+  //         headers: { 'Content-Type': 'application/json' },
+  //         body: JSON.stringify({ file: base64File }),
+  //       });
+
+  //       const text = await uploadRes.text();
+  //       let uploadData;
+
+  //       try {
+  //         uploadData = JSON.parse(text);
+  //       } catch {
+  //         throw new Error(`Invalid JSON from upload API: ${text}`);
+  //       }
+
+  //       if (!uploadRes.ok) {
+  //         throw new Error(uploadData.error || 'Image upload failed');
+  //       }
+
+  //       // Replace image with Cloudinary URL
+  //       updatedData.image = uploadData.url;
+  //     } else if (typeof data.image === 'string') {
+  //       // User didn’t upload new image — keep existing Cloudinary URL
+  //       updatedData.image = data.image;
+  //     } else {
+  //       // No image provided
+  //       updatedData.image = null;
+  //     }
+
+  //     // Update blog in DB
+  //     await blogService.updateBlog(id, updatedData);
+
+  //     // Redirect back to blog post
+  //     router.push(`/blog/${id}`);
+  //   } catch (error) {
+  //     console.error('Error updating blog:', error);
+  //     alert(error.message || 'Error updating blog post. Please try again.');
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
 
   const handleDelete = async () => {
