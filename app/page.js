@@ -37,7 +37,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-100">
       <Head>
-        <title>My Blog</title>
+        <title>SMA Yadika 1 Blog</title>
         <meta name="description" content="A modern blog built with Next.js and Firebase" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -45,7 +45,7 @@ export default function Home() {
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-gray-900">My Blog</h1>
+            <h1 className="text-2xl font-bold text-gray-900">SMA Yadika 1 Blog</h1>
             <Link
               href="/admin/create"
               className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
